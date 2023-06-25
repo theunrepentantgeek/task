@@ -21,8 +21,9 @@ var flags struct {
 
 func main() {
 	if err := run(); err != nil {
+		// Always log to stderr to allow piping into GraphViz
 		log := &logger.Logger{
-			Stdout:  os.Stdout,
+			Stdout:  os.Stderr,
 			Stderr:  os.Stderr,
 			Verbose: flags.verbose,
 			Color:   flags.color,
