@@ -168,7 +168,7 @@ func (b *graphBuilder) writeFileTrailer(buffer io.StringWriter) {
 
 func (b *graphBuilder) writeNodes(
 	header string,
-	style Style,
+	style Attributes,
 	nodes map[string]*node,
 	buffer io.StringWriter,
 ) {
@@ -191,7 +191,7 @@ func (b *graphBuilder) writeNodes(
 
 func (b *graphBuilder) writeEdges(
 	header string,
-	style Style,
+	style Attributes,
 	edges []*edge,
 	buffer io.StringWriter,
 ) {
