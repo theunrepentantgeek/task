@@ -22,12 +22,7 @@ var flags struct {
 func main() {
 	if err := run(); err != nil {
 		// Always log to stderr to allow piping into GraphViz
-		log := &logger.Logger{
-			Stdout:  os.Stderr,
-			Stderr:  os.Stderr,
-			Verbose: flags.verbose,
-			Color:   flags.color,
-		}
+		log := createLogger()
 
 		log.Errf(logger.Red, "%v\n", err)
 		os.Exit(errors.CodeUnknown)
@@ -82,7 +77,7 @@ func run() error {
 
 func createLogger() *logger.Logger {
 	return &logger.Logger{
-		Stdout:  os.Stdout,
+		Stdout:  os.Stderr,
 		Stderr:  os.Stderr,
 		Verbose: flags.verbose,
 		Color:   flags.color,
