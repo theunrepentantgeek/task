@@ -22,7 +22,7 @@ type graphBuilder struct {
 	directory string         // directory from which to load a taskfile
 	taskfile  string         // name of the taskfile to load (optional)
 	log       *logger.Logger // log to use for progress
-	config    *config        // configuration for the graph
+	config    *Config        // configuration for the graph
 }
 
 // NewGraphBuilder creates a new graph builder.
