@@ -87,6 +87,7 @@ func (b *graphBuilder) createNodes(taskfile *taskfile.Taskfile) map[string]*node
 		name := task.Task
 		id := b.createId(name)
 		node := NewNode(id, name)
+		b.config.ApplyNodeStyles(node)
 		result[id] = node
 	}
 
