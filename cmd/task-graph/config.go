@@ -18,7 +18,7 @@ type Config struct {
 
 type Style struct {
 	matcher    *regexp.Regexp
-	Glob       string
+	Match      string
 	Attributes Attributes
 }
 
@@ -66,7 +66,7 @@ func (c *Config) ApplyNodeStyles(node *node) {
 
 func (s *Style) Matches(name string) bool {
 	if s.matcher == nil {
-		g := regexp.QuoteMeta(s.Glob)
+		g := regexp.QuoteMeta(s.Match)
 		g = strings.ReplaceAll(g, "\\*", ".*")
 		g = strings.ReplaceAll(g, "\\?", ".")
 		g = "(?i)(^" + g + "$)"
