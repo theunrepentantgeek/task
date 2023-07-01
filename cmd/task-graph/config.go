@@ -1,15 +1,19 @@
 package main
 
 import (
+	"os"
 	"regexp"
 	"strings"
+
+	"github.com/pkg/errors"
+	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
 	Task       Attributes `yaml:"task"`
 	Dependency Attributes `yaml:"dependency"`
 	Call       Attributes `yaml:"invocation"`
-	NodeStyles []Style    `yaml:"nodeStyles"`
+	NodeStyles []Style    `yaml:"node-styles"`
 }
 
 type Style struct {
@@ -37,6 +41,19 @@ func defaultConfig() *Config {
 			"arrowtail": "none",
 		},
 	}
+}
+
+func (c *Config) Load(filepath string) error {
+	// Create a reader to load the config file
+	reader, err := os.Open(filepath)
+	if err != nil {
+		return errors.Wrap(err, "failed to open config file")
+	}
+
+	// Load the config and flag any errors
+	decoder := yaml.NewDecoder(reader)
+	decoder.KnownFields(true)
+	return decoder.Decode(c)
 }
 
 func (c *Config) ApplyNodeStyles(node *node) {

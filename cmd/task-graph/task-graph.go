@@ -12,11 +12,12 @@ import (
 	ver "github.com/go-task/task/v3/internal/version"
 )
 
-var flags struct {
-	version bool
-	help    bool
-	color   bool
-	verbose bool
+var params struct {
+	version    bool
+	help       bool
+	color      bool
+	verbose    bool
+	configFile string
 }
 
 func main() {
@@ -39,29 +40,37 @@ func run() error {
 		pflag.PrintDefaults()
 	}
 
-	pflag.BoolVar(&flags.version, "version", false, "Show task-graph version.")
-	pflag.BoolVarP(&flags.help, "help", "h", false, "Shows task-graph usage.")
-	pflag.BoolVarP(&flags.color, "color", "c", true, "Colored output. Enabled by default. Set flag to false or use NO_COLOR=1 to disable.")
-	pflag.BoolVarP(&flags.verbose, "verbose", "v", false, "Enables log verbose mode.")
+	pflag.BoolVar(&params.version, "version", false, "Show task-graph version.")
+	pflag.BoolVarP(&params.help, "help", "h", false, "Shows task-graph usage.")
+	pflag.BoolVarP(&params.color, "color", "c", true, "Colored output. Enabled by default. Set flag to false or use NO_COLOR=1 to disable.")
+	pflag.BoolVarP(&params.verbose, "verbose", "v", false, "Enables log verbose mode.")
+	pflag.StringVarP(&params.configFile, "config", "", "", "Configuration file to use.")
 
 	pflag.Parse()
 
-	if flags.version {
+	if params.version {
 		fmt.Printf("task-graph version: %s\n", ver.GetVersion())
 		return nil
 	}
 
-	if flags.help {
+	files := pflag.Args()
+	if params.help || len(files) == 0 {
 		pflag.Usage()
 		return nil
 	}
 
-	files := pflag.Args()
 	if len(files) != 1 {
 		return errors.New("task-graph requires exactly one taskfile")
 	}
 
-	builder, err := NewGraphBuilder(files[0], createLogger())
+	config := defaultConfig()
+	if params.configFile != "" {
+		if err := config.Load(params.configFile); err != nil {
+			return err
+		}
+	}
+
+	builder, err := NewGraphBuilder(files[0], config, createLogger())
 	if err != nil {
 		return err
 	}
@@ -79,7 +88,7 @@ func createLogger() *logger.Logger {
 	return &logger.Logger{
 		Stdout:  os.Stderr,
 		Stderr:  os.Stderr,
-		Verbose: flags.verbose,
-		Color:   flags.color,
+		Verbose: params.verbose,
+		Color:   params.color,
 	}
 }

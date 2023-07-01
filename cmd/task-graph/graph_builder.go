@@ -29,12 +29,12 @@ type graphBuilder struct {
 // path specifies either a directory or a taskfile.
 func NewGraphBuilder(
 	path string,
+	config *Config,
 	log *logger.Logger,
 ) (*graphBuilder, error) {
-
 	result := &graphBuilder{
 		log:    log,
-		config: defaultConfig(),
+		config: config,
 	}
 
 	// If the path doesn't exist, we can't load anything
